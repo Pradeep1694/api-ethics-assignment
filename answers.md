@@ -1,6 +1,28 @@
-full_name                Direct PII           Drop                       Directly identifies the individual
-email                    Direct PII           Drop                       High-risk should removed leaks.
-date_of_birth            Indirect PII         Mask                       Can be used for re-identification. Convert to "Age Group" (e.g., 20-30) instead.
-zip_code                 Indirect PII         Mask                       Keep only the first 3 digits to provide general location without pinpointing a home.
-job_title                Indirect PII         Pseudonymize               Replace specific titles with generic categories to prevent identity "leaks."
-diagnosis_notes          Indirect PII         Pseudonymize               Notes often contain names or specific dates; must be scrubbed of identifiers.
+[Ethics.docx](https://github.com/user-attachments/files/26527629/Ethics.docx)
+
+import requests
+import time
+
+API_KEY = os.getenv("HEALTH_STATS_API_KEY") 
+API_URL = "https://healthstats-api.example.com/records"
+
+records = []
+
+for page in range(1, 101):
+    # API Request
+    response = requests.get(API_URL, params={"page": page, "key": API_KEY})
+    
+    time.sleep(1.0) 
+    
+    if response.status_code == 200:
+        data = response.json()
+        records.extend(data["results"])
+    else:
+        print(f"Error fetching page {page}: {response.status_code}")
+
+def clean_pii(data_list):
+    return data_list 
+
+cleaned_data = clean_pii(records)
+save_to_database(cleaned_data)
+
